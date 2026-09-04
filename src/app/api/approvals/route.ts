@@ -1,0 +1,5 @@
+import { canEditContent } from "@/lib/auth/authorization";
+import { getRequestContext } from "@/lib/auth/context";
+import { decideApproval } from "@/lib/repositories/workspace";
+
+export async function POST(request:Request){const context=await getRequestContext();if(!context)return Response.json({error:"authentication required"},{status:401});if(!canEditContent(context.role))return Response.json({error:"insufficient workspace role"},{status:403});const body=(await request.json()) as {entityType?:string;entityId?:string;decision?:"approved"|"rejected";comment?:string};if(!body.entityType||!body.entityId||!body.decision)return Response.json({error:"entityType, entityId and decision are required"},{status:400});if(!["post","workflow","campaign"].includes(body.entityType))return Response.json({error:"unsupported entity type"},{status:400});const approval=await decideApproval({workspaceId:context.workspaceId,entityType:body.entityType,entityId:body.entityId,userId:context.userId,decision:body.decision,comment:body.comment});return Response.json({approval})}

@@ -15,13 +15,23 @@
 - Docker + CI
 - Unit tests
 
-## Phase 1 — Real persistence and auth
-- Add Auth.js or Supabase Auth
-- Enforce workspace RBAC on every route/action
-- Replace demo repositories with PostgreSQL-backed repositories
-- Persist campaigns, posts, approvals, agent runs and workflow runs
-- Add encrypted provider token storage
-- Add database migration runner and seed command
+## Phase 1 — Real persistence and auth (implemented foundation)
+- Supabase SSR cookie auth + Next.js proxy refresh
+- verified claims → workspace context mapping
+- automatic first-workspace provisioning
+- owner/admin/editor mutation authorization
+- PostgreSQL-backed dashboard/products/campaigns/posts/workflows/analytics repositories
+- persisted agent runs, workflow runs and approval decisions
+- RLS on every public control-plane table
+- Data API read policies scoped through workspace membership
+- connections/job queue blocked from browser Data API
+- tenant-scoped background jobs and commerce webhook ownership resolution
+- persisted approval/audit trail before publish
+
+Remaining Phase 1 hardening:
+- KMS-backed token envelope encryption implementation
+- migration/seed CLI around target Supabase project
+- generated database TypeScript types once the real project is linked
 
 ## Phase 2 — Provider connectivity
 - Shopify OAuth + app installation

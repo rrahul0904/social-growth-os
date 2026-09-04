@@ -128,6 +128,17 @@ Raw event volume can later move from PostgreSQL to ClickHouse/BigQuery/Snowflake
 ### Kubernetes
 Deploy web and worker as separate Deployments. Use a managed PostgreSQL service or StatefulSet for non-production environments. Scale workers horizontally because job leases use `SKIP LOCKED`.
 
+## Phase 1 identity and persistence
+
+Live mode uses Supabase Auth with cookie-based SSR sessions. A Next.js proxy refreshes the session and server-side code validates claims before deriving a workspace. Workspace IDs are never accepted from client input for protected reads/writes.
+
+The application uses two complementary authorization layers:
+
+1. server authorization from verified identity → `workspace_members` role → workspace-scoped SQL;
+2. Supabase RLS for exposed Data API reads as defense in depth.
+
+OAuth token rows (`connections`) and durable jobs (`job_queue`) remain server-only and are not granted to `authenticated`/`anon`.
+
 ## Production hardening backlog
 
 1. Real OAuth flows and encrypted token vault

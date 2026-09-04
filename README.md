@@ -16,8 +16,13 @@ The repo intentionally separates **agent reasoning** from **durable workflow exe
 - Shopify + WooCommerce webhook normalization and HMAC verification
 - social publisher adapter contract
 - PostgreSQL schema for workspace, brand, product, campaign, post, workflow, agent, approval, analytics, queue and audit state
-- PostgreSQL durable job leasing with `SKIP LOCKED`, retries and dead-letter state
+- PostgreSQL durable job leasing with `SKIP LOCKED`, tenant scoping, retries and dead-letter state
 - worker skeleton
+- Supabase SSR authentication with Next.js proxy token refresh
+- workspace auto-provisioning + role authorization
+- PostgreSQL-backed live repositories with demo fallback
+- persisted approval/audit trail and agent/workflow runs
+- Supabase RLS policies for workspace-isolated Data API reads
 - analytics and attribution surface
 - integration control plane UI
 - Docker / Docker Compose
@@ -46,6 +51,19 @@ npm run dev
 ```
 
 Open `http://localhost:3000`. `DEMO_MODE=true` is the default, so no database or API credentials are required for the UI and agent demo.
+
+## Activate live auth + persistence
+
+Create/link the intended Supabase project, apply both migrations, then set:
+
+```bash
+DEMO_MODE=false
+NEXT_PUBLIC_SUPABASE_URL=<project-url>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>
+DATABASE_URL=<server-side postgres/pooler connection>
+```
+
+See [`docs/AUTH_PERSISTENCE.md`](docs/AUTH_PERSISTENCE.md). Until those values are set, the same codebase stays usable in demo mode.
 
 ## Run the production-shaped stack with Docker
 
@@ -82,6 +100,7 @@ See:
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md)
 - [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md)
+- [`docs/AUTH_PERSISTENCE.md`](docs/AUTH_PERSISTENCE.md)
 - [`SECURITY.md`](SECURITY.md)
 
 ## Repository philosophy

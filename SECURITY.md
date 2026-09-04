@@ -1,6 +1,11 @@
 # Security
 
 ## Current guarantees
+- Supabase SSR sessions are verified server-side before workspace context is created.
+- Workspace role comes from `workspace_members`, never editable user metadata.
+- Protected mutations require owner/admin/editor role.
+- RLS is enabled on all public-schema application tables.
+- OAuth connection tokens and durable queue payloads are not exposed through the browser Data API.
 - Webhook HMAC verification is implemented and required outside demo mode.
 - Publishing endpoint requires explicit approval.
 - Provider logic is isolated behind adapter interfaces.

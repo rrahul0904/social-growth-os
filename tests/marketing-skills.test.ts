@@ -15,8 +15,10 @@ test("routes research objectives deterministically to matching skills", () => {
   const routes = routeMarketingSkills("Research competitors and create an SEO keyword brief");
   assert.deepEqual(
     routes.map((route) => route.skill.id),
-    ["competitor-research", "seo-brief"],
+    ["seo-brief", "competitor-research"],
   );
+  assert.deepEqual(routes[0].matchedKeywords, ["seo", "keyword"]);
+  assert.deepEqual(routes[1].matchedKeywords, ["competitor"]);
 });
 
 test("publish pipeline remains privileged and workflow-only", () => {

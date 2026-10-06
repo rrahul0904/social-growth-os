@@ -8,6 +8,7 @@ import { Icon, type IconName } from "@/components/icons";
 const navigation: Array<{ href: string; label: string; icon: IconName }> = [
   { href: "/dashboard", label: "Command Center", icon: "grid" },
   { href: "/agent", label: "Growth Agent", icon: "spark" },
+  { href: "/discovery", label: "Customer Discovery", icon: "flow" },
   { href: "/workflows", label: "Workflows", icon: "flow" },
   { href: "/calendar", label: "Calendar", icon: "calendar" },
   { href: "/library", label: "Library", icon: "image" },

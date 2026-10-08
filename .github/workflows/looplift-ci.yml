@@ -1,0 +1,51 @@
+name: LoopLift CI
+
+on:
+  pull_request:
+    paths:
+      - "experiments/looplift/**"
+      - ".github/workflows/looplift-ci.yml"
+  push:
+    branches:
+      - "feature/looplift-referral-ladder"
+    paths:
+      - "experiments/looplift/**"
+      - ".github/workflows/looplift-ci.yml"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: experiments/looplift
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+        env:
+          ANTI_ABUSE_SECRET: ci-only-not-a-production-secret
+      - name: Production HTTP smoke
+        env:
+          STORAGE_BACKEND: file
+          FILE_STORE_DIR: /tmp/looplift-http-smoke
+          ANTI_ABUSE_SECRET: ci-http-smoke-secret
+        run: |
+          set -euo pipefail
+          rm -rf "$FILE_STORE_DIR"
+          npm start -- -H 127.0.0.1 -p 3000 >/tmp/looplift-next.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" >/dev/null 2>&1 || true; cat /tmp/looplift-next.log' EXIT
+          ready=0
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000 >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" -eq 1
+          node test/http-smoke.mjs

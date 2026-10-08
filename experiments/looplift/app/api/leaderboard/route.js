@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {getLeaderboard} from '../../../lib/store';import {weekKey} from '../../../lib/logic.mjs';export const runtime='nodejs';export async function GET(){const leaderboard=await getLeaderboard();return NextResponse.json({week:weekKey(new Date()),leaderboard},{headers:{'Cache-Control':'no-store'}});}
